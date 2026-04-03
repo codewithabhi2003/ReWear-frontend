@@ -1,0 +1,242 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── Google Fonts loaded in index.html ─────────────────────────────────────── */
+
+/* ─── DARK THEME (default) ──────────────────────────────────────────────────── */
+:root,
+[data-theme="dark"] {
+  --bg-primary:    #0D0D0D;
+  --bg-secondary:  #161616;
+  --bg-card:       #1E1E1E;
+  --bg-input:      #252525;
+  --bg-elevated:   #2A2A2A;
+
+  --accent-primary: #FF6B35;
+  --accent-green:   #00C896;
+  --accent-red:     #FF4757;
+  --accent-yellow:  #FFD32A;
+
+  --text-primary:   #F5F5F5;
+  --text-secondary: #A8A8A8;
+  --text-muted:     #555555;
+
+  --border:         #2C2C2C;
+  --shadow:         rgba(255, 107, 53, 0.12);
+  --overlay:        rgba(0, 0, 0, 0.7);
+}
+
+/* ─── LIGHT THEME ───────────────────────────────────────────────────────────── */
+[data-theme="light"] {
+  --bg-primary:    #FFFFFF;
+  --bg-secondary:  #F7F7F7;
+  --bg-card:       #FFFFFF;
+  --bg-input:      #F0F0F0;
+  --bg-elevated:   #FFFFFF;
+
+  --accent-primary: #E8501A;
+  --accent-green:   #00A87A;
+  --accent-red:     #D63031;
+  --accent-yellow:  #E1B400;
+
+  --text-primary:   #111111;
+  --text-secondary: #555555;
+  --text-muted:     #AAAAAA;
+
+  --border:         #E5E5E5;
+  --shadow:         rgba(0, 0, 0, 0.08);
+  --overlay:        rgba(0, 0, 0, 0.5);
+}
+
+/* ─── BASE STYLES ───────────────────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: 'DM Sans', sans-serif;
+  transition: background-color 300ms ease, color 300ms ease;
+  min-height: 100vh;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── SCROLLBAR ─────────────────────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* ─── SELECTION ─────────────────────────────────────────────────────────────── */
+::selection {
+  background: var(--accent-primary);
+  color: #fff;
+}
+
+/* ─── TYPOGRAPHY UTILITIES ──────────────────────────────────────────────────── */
+.font-syne    { font-family: 'Syne', sans-serif; }
+.font-dm      { font-family: 'DM Sans', sans-serif; }
+.font-grotesk { font-family: 'Space Grotesk', sans-serif; }
+
+/* ─── COMPONENT LAYER ───────────────────────────────────────────────────────── */
+@layer components {
+
+  /* ── Buttons ─────────────────────────────────────────────────────────────── */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2
+           px-6 py-3 rounded-xl font-medium text-white text-sm
+           transition-all duration-200 select-none cursor-pointer;
+    background-color: var(--accent-primary);
+  }
+  .btn-primary:hover {
+    filter: brightness(1.1);
+    transform: scale(1.02);
+  }
+  .btn-primary:active {
+    transform: scale(0.98);
+  }
+  .btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2
+           px-6 py-3 rounded-xl font-medium text-sm
+           transition-all duration-200 select-none cursor-pointer;
+    border: 1px solid var(--accent-primary);
+    color: var(--accent-primary);
+    background: transparent;
+  }
+  .btn-secondary:hover {
+    background: color-mix(in srgb, var(--accent-primary) 10%, transparent);
+  }
+
+  .btn-danger {
+    @apply inline-flex items-center justify-center gap-2
+           px-6 py-3 rounded-xl font-medium text-white text-sm
+           transition-all duration-200 select-none cursor-pointer;
+    background-color: var(--accent-red);
+  }
+  .btn-danger:hover { filter: brightness(1.1); }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2
+           px-4 py-2 rounded-xl font-medium text-sm
+           transition-all duration-200 select-none cursor-pointer;
+    background: var(--bg-card);
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+  }
+  .btn-ghost:hover { background: var(--bg-elevated); }
+
+  /* ── Input ───────────────────────────────────────────────────────────────── */
+  .input {
+    @apply w-full rounded-lg px-4 py-3 text-sm outline-none
+           transition-all duration-200;
+    background: var(--bg-input);
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+  }
+  .input::placeholder { color: var(--text-muted); }
+  .input:focus {
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent-primary) 20%, transparent);
+  }
+
+  /* ── Card ────────────────────────────────────────────────────────────────── */
+  .card {
+    @apply rounded-[12px] overflow-hidden transition-all duration-200;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    box-shadow: 0 2px 12px var(--shadow);
+  }
+  .card-hover:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 40px var(--shadow);
+  }
+
+  /* ── Badge ───────────────────────────────────────────────────────────────── */
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+  .badge-brand {
+    background: color-mix(in srgb, var(--accent-primary) 15%, transparent);
+    color: var(--accent-primary);
+  }
+  .badge-green {
+    background: color-mix(in srgb, var(--accent-green) 15%, transparent);
+    color: var(--accent-green);
+  }
+  .badge-red {
+    background: color-mix(in srgb, var(--accent-red) 15%, transparent);
+    color: var(--accent-red);
+  }
+  .badge-yellow {
+    background: color-mix(in srgb, var(--accent-yellow) 15%, transparent);
+    color: var(--accent-yellow);
+  }
+  .badge-muted {
+    background: var(--bg-elevated);
+    color: var(--text-secondary);
+  }
+
+  /* ── Divider ─────────────────────────────────────────────────────────────── */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    @apply w-full my-4;
+  }
+
+  /* ── Section Label ───────────────────────────────────────────────────────── */
+  .section-title {
+    @apply text-2xl font-bold;
+    font-family: 'Syne', sans-serif;
+    color: var(--text-primary);
+  }
+
+  /* ── Price ───────────────────────────────────────────────────────────────── */
+  .price {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600;
+    color: var(--accent-primary);
+  }
+  .price-original {
+    font-family: 'Space Grotesk', sans-serif;
+    color: var(--text-muted);
+    text-decoration: line-through;
+  }
+
+  /* ── Skeleton ────────────────────────────────────────────────────────────── */
+  .skeleton {
+    @apply rounded animate-pulse;
+    background: var(--bg-elevated);
+  }
+
+  /* ── Page Container ──────────────────────────────────────────────────────── */
+  .page-container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8;
+  }
+}
