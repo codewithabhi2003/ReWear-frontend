@@ -17,12 +17,13 @@ const CATEGORIES = [
   { name: 'Activewear',  sub: 'Gym & Sport',     icon: '⚡', q: 'Activewear',  color: '#00C896' },
 ];
 
-const MARQUEE_ITEMS = ['Verified Brands', 'No Cap', 'Real Deals', 'Cop Before Its Gone', 'Sustainable Flex', 'Thrift Core', 'Drip Different', 'Auth Checked'];
+const MARQUEE_ITEMS = ['Verified Brands', 'Negotiate in Chat', 'Real Deals', 'Cop Before Its Gone', 'Sustainable Flex', 'Thrift Core', 'Drip Different', 'Auth Checked', 'Price Offers', 'No Ghosting', 'Secure Payments', 'Admin Verified'];
 
 const HOW_IT_WORKS = [
-  { num: '01', icon: '📸', title: 'Snap & List',  sub: 'Takes 2 mins',       desc: "Click a few photos, set your price, drop it on ReWear. That's it." },
-  { num: '02', icon: '🛡️', title: 'We Verify It', sub: 'Auth guaranteed',    desc: 'Our team checks every listing. Fakes never make it through. Ever.' },
-  { num: '03', icon: '💸', title: 'Get Paid',      sub: 'Via Razorpay',       desc: 'Buyer pays, you ship, money lands. Clean, secure, no drama.' },
+  { num: '01', icon: '📸', title: 'Snap & List',      sub: 'Takes 2 mins',        desc: "Click a few photos, set your price, drop it on ReWear. That's it." },
+  { num: '02', icon: '🛡️', title: 'We Verify It',     sub: 'Auth guaranteed',     desc: 'Our team checks every listing. Fakes never make it through. Ever.' },
+  { num: '03', icon: '💬', title: 'Chat & Negotiate',  sub: 'No WhatsApp needed',  desc: 'Message the seller, drag a slider to make your offer. They accept, counter, or decline — all on record.' },
+  { num: '04', icon: '💸', title: 'Pay & Track',       sub: 'Via Razorpay',        desc: 'Pay at the agreed price. Watch your order go from Packed → Shipped → Delivered.' },
 ];
 
 export default function Home() {
@@ -300,13 +301,95 @@ export default function Home() {
         <ProductGrid products={newArrivals} loading={loadingN} emptyMessage="Be the first to list something 👀" />
       </section>
 
+
+      {/* ── NEGOTIATE FEATURE ─────────────────────────────────────────────── */}
+      <section className="page-container">
+        <div className="relative overflow-hidden rounded-3xl p-8 md:p-12"
+          style={{ background: 'linear-gradient(135deg, color-mix(in srgb, var(--accent-primary) 12%, var(--bg-card)), color-mix(in srgb, #7C3AED 8%, var(--bg-card)))', border: '1px solid color-mix(in srgb, var(--accent-primary) 20%, var(--border))' }}>
+          <div className="absolute -right-12 -top-12 w-64 h-64 rounded-full blur-3xl pointer-events-none"
+            style={{ background: 'color-mix(in srgb, var(--accent-primary) 12%, transparent)' }} />
+          <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+            <div>
+              <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest mb-5"
+                style={{ background: 'color-mix(in srgb, var(--accent-primary) 12%, transparent)', color: 'var(--accent-primary)', border: '1px solid color-mix(in srgb, var(--accent-primary) 25%, transparent)' }}>
+                🆕 New Feature
+              </span>
+              <h2 className="font-syne font-black text-3xl md:text-4xl mb-4 leading-tight" style={{ color: 'var(--text-primary)' }}>
+                Negotiate the price.<br />
+                <span style={{ background: 'linear-gradient(135deg, var(--accent-primary), #FF9A3C)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                  Right inside chat.
+                </span>
+              </h2>
+              <p className="text-base leading-relaxed mb-6" style={{ color: 'var(--text-secondary)' }}>
+                No more WhatsApp threads that go nowhere. No more ghosting after you ask for "last price."
+                ReWear's built-in negotiation keeps every offer on record — structured, fair, and fast.
+              </p>
+              <div className="space-y-3">
+                {[
+                  { icon: '🎚️', text: 'Drag a slider to set your offer price' },
+                  { icon: '↕️',  text: 'Seller can accept, decline, or counter' },
+                  { icon: '✅',  text: 'Deal locked — pay at the exact agreed price' },
+                  { icon: '📦',  text: 'Full delivery tracking after payment' },
+                ].map(({ icon, text }) => (
+                  <div key={text} className="flex items-center gap-3">
+                    <span className="text-lg flex-shrink-0">{icon}</span>
+                    <p className="text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>{text}</p>
+                  </div>
+                ))}
+              </div>
+              <Link to="/browse" className="btn-primary mt-8 inline-flex items-center gap-2">
+                Find Something to Negotiate <ArrowRight size={16} />
+              </Link>
+            </div>
+
+            {/* Visual mockup of offer card */}
+            <div className="flex flex-col gap-3">
+              {/* Buyer offer card */}
+              <div className="rounded-2xl p-4" style={{ background: 'var(--bg-elevated)', border: '1px solid color-mix(in srgb, var(--accent-primary) 30%, transparent)' }}>
+                <div className="flex items-center gap-2 mb-3">
+                  <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--accent-primary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>🏷️ Price Offer</span>
+                </div>
+                <p className="font-syne font-black text-3xl mb-1" style={{ color: 'var(--text-primary)' }}>₹1,500</p>
+                <p className="text-xs mb-3" style={{ color: 'var(--accent-primary)' }}>25% off · was ₹2,000</p>
+                <div className="flex gap-2">
+                  <div className="flex-1 py-2 rounded-lg text-xs font-bold text-center" style={{ background: '#00C896', color: '#000' }}>✓ Accept</div>
+                  <div className="flex-1 py-2 rounded-lg text-xs font-bold text-center" style={{ border: '1px solid var(--border)', color: 'var(--text-muted)' }}>↕ Counter</div>
+                </div>
+              </div>
+              {/* Counter card */}
+              <div className="rounded-2xl p-4" style={{ background: 'var(--bg-elevated)', border: '1px solid rgba(0,200,150,0.3)' }}>
+                <div className="flex items-center gap-2 mb-3">
+                  <span style={{ fontSize: 12, fontWeight: 700, color: '#00C896', textTransform: 'uppercase', letterSpacing: '0.05em' }}>↕️ Counter Offer</span>
+                </div>
+                <p className="font-syne font-black text-3xl mb-1" style={{ color: 'var(--text-primary)' }}>₹1,750</p>
+                <p className="text-xs mb-3" style={{ color: '#00C896' }}>12.5% off · was ₹2,000</p>
+                <div className="flex gap-2">
+                  <div className="flex-1 py-2 rounded-lg text-xs font-bold text-center" style={{ background: '#00C896', color: '#000' }}>✓ Accept</div>
+                  <div className="flex-1 py-2 rounded-lg text-xs font-bold text-center" style={{ border: '1px solid var(--border)', color: '#ff4444' }}>✗ Decline</div>
+                </div>
+              </div>
+              {/* Accepted card */}
+              <div className="rounded-2xl p-4" style={{ background: 'color-mix(in srgb, #00C896 8%, var(--bg-elevated))', border: '1px solid rgba(0,200,150,0.3)' }}>
+                <div className="flex items-center gap-2 mb-2">
+                  <span style={{ fontSize: 12, fontWeight: 700, color: '#00C896' }}>✅ Deal Agreed!</span>
+                </div>
+                <p className="font-syne font-black text-2xl mb-3" style={{ color: '#00C896' }}>₹1,750 final</p>
+                <div className="py-2.5 rounded-lg text-xs font-bold text-center" style={{ background: 'var(--accent-primary)', color: '#fff' }}>
+                  💳 Pay ₹1,750
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ── HOW IT WORKS ──────────────────────────────────────────────────── */}
       <section className="page-container">
         <div className="text-center mb-12">
           <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: 'var(--text-muted)' }}>No Cap</p>
           <h2 className="section-title">How It Actually Works</h2>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {HOW_IT_WORKS.map((step) => (
             <div key={step.num} className="relative card p-6 text-center hover:-translate-y-1 transition-all duration-300">
               <div className="absolute top-3 right-4 font-grotesk font-black text-5xl opacity-[0.04]"
@@ -324,10 +407,10 @@ export default function Home() {
       <section className="page-container">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {[
-            { icon: '🛡️', label: 'Auth Verified',    sub: 'Every single listing' },
-            { icon: '⚡', label: 'Fast Checkout',     sub: 'Razorpay secured' },
-            { icon: '🔁', label: 'Easy Returns',      sub: 'Hassle-free process' },
-            { icon: '💬', label: 'Chat with Seller',  sub: 'Before you buy' },
+            { icon: '🛡️', label: 'Admin Verified',       sub: 'Every listing checked' },
+            { icon: '💬', label: 'Negotiate in Chat',     sub: 'Drag. Offer. Done.' },
+            { icon: '⚡', label: 'Secure Payments',       sub: 'Razorpay protected' },
+            { icon: '📦', label: 'Full Order Tracking',   sub: 'Packed to delivered' },
           ].map((t) => (
             <div key={t.label} className="card p-4 flex items-center gap-3">
               <span className="text-2xl flex-shrink-0">{t.icon}</span>

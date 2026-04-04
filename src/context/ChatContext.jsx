@@ -59,7 +59,20 @@ export function ChatProvider({ children }) {
       console.log('🔌 Socket connected');
     });
 
-    socket.on('disconnect', () => setIsConnected(false));
+    socket.on('disconnect', () => {
+      setIsConnected(false);
+      // Auto-reconnect on visibility change (fixes mobile tab switching)
+    });
+
+    // Reconnect when tab becomes visible again (mobile users switching apps)
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible') {
+        if (!socket.connected) {
+          socket.connect();
+        }
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
 
     // Route message to the open chat window if it is listening
     socket.on('receive_message', (message) => {
@@ -77,7 +90,10 @@ export function ChatProvider({ children }) {
       addNotification(notif);
     });
 
-    return () => { socket.disconnect(); };
+    return () => {
+      socket.disconnect();
+      document.removeEventListener('visibilitychange', handleVisibility);
+    };
   }, [isAuth, token, addNotification]);
 
   // ── Actions ──────────────────────────────────────────────────────────────

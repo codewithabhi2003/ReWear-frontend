@@ -1,4 +1,5 @@
 import { lazy, Suspense } from 'react';
+import ScrollToTop from './components/common/ScrollToTop';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 
@@ -62,6 +63,7 @@ function AppLayout({ children, hideFooter = false }) {
 export default function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <ThemeProvider>
         <AuthProvider>
           <NotificationProvider>
