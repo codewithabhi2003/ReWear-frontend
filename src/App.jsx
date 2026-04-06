@@ -15,6 +15,7 @@ import Footer         from './components/common/Footer';
 import ProtectedRoute from './components/common/ProtectedRoute';
 import AdminLayout    from './components/common/AdminLayout';
 import { PageLoader } from './components/common/Loader';
+import AIChatButton from "./components/AIChat/AIChatButton";
 
 // ── Lazy-loaded pages ─────────────────────────────────────────────────────────
 const Home            = lazy(() => import('./pages/Home'));
@@ -205,7 +206,7 @@ export default function App() {
                       </AppLayout>
                     } />
                   </Routes>
-
+                  <AIChatButton />
                 </ChatProvider>
               </WishlistProvider>
             </CartProvider>

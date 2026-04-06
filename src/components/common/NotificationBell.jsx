@@ -63,11 +63,23 @@ export default function NotificationBell() {
       </button>
 
       {/* Dropdown */}
-      {open && (
-        <div
-          className="absolute right-0 mt-2 w-80 rounded-xl shadow-card-hover z-50 overflow-hidden animate-slide-up"
-          style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)' }}
-        >
+     {open && (
+  <div
+    style={{
+      position: 'fixed',
+      top: '64px',
+      left: '50%',
+      transform: 'translateX(-50%)',
+      width: 360,
+      maxWidth: 'calc(100vw - 32px)',
+      zIndex: 50,
+      borderRadius: 16,
+      overflow: 'hidden',
+      background: 'var(--bg-elevated)',
+      border: '1px solid var(--border)',
+      boxShadow: '0 24px 60px rgba(0,0,0,0.4)',
+    }}
+  >
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 border-b" style={{ borderColor: 'var(--border)' }}>
             <span className="font-semibold text-sm" style={{ color: 'var(--text-primary)' }}>
