@@ -1,9 +1,14 @@
 import { useState } from 'react';
 import { Sparkles } from 'lucide-react';
 import AIChatWindow from './AIChatWindow';
+import { useLocation } from 'react-router-dom';
 
 export default function AIChatButton() {
   const [open, setOpen] = useState(false);
+  const { pathname } = useLocation();
+
+  // Hide on chat pages to avoid overlapping the message input
+  if (pathname.startsWith('/chat')) return null;
 
   return (
     <>

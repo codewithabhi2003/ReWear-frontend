@@ -1,5 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 
+// ── Product card — fields match controller .select() ─────────────────────────
+// Controller returns: _id, title, brand, sellingPrice, images, category, condition, size
 function ProductCard({ product }) {
   const navigate = useNavigate();
   const img      = product.images?.[0] || '';
@@ -29,11 +31,11 @@ function ProductCard({ product }) {
       {img && (
         <img
           src={img}
-          alt={product.name}
+          alt={product.title}                   
           style={{ width: 56, height: 56, objectFit: 'cover', borderRadius: 8, flexShrink: 0 }}
         />
       )}
-      <div style={{ minWidth: 0 }}>
+      <div style={{ minWidth: 0, flex: 1 }}>
         <p style={{
           fontSize:     12,
           fontWeight:   700,
@@ -44,10 +46,11 @@ function ProductCard({ product }) {
           textOverflow: 'ellipsis',
           margin:       0,
         }}>
-          {product.brand} — {product.name}
+          {product.brand} — {product.title}           {/* ✅ was product.name */}
         </p>
         <p style={{ fontSize: 11, color: 'var(--text-muted)', margin: '2px 0' }}>
           {product.category} · {product.condition}
+          {product.size ? ` · Size ${product.size}` : ''}
         </p>
         <p style={{
           fontSize:   13,
@@ -56,13 +59,14 @@ function ProductCard({ product }) {
           fontFamily: "'Space Grotesk', sans-serif",
           margin:     0,
         }}>
-          ₹{product.price?.toLocaleString('en-IN')}
+          ₹{product.sellingPrice?.toLocaleString('en-IN')}  {/* ✅ was product.price */}
         </p>
       </div>
     </div>
   );
 }
 
+// ── Price estimate card — fields from AI JSON response ────────────────────────
 function PriceEstimateCard({ data }) {
   return (
     <div style={{
@@ -71,7 +75,7 @@ function PriceEstimateCard({ data }) {
       background:   'var(--bg-elevated)',
       overflow:     'hidden',
     }}>
-      {/* Header bar */}
+      {/* Header */}
       <div style={{
         padding:    '10px 14px',
         background: 'linear-gradient(135deg, var(--accent-primary) 0%, #FF9A3C 100%)',
@@ -96,6 +100,29 @@ function PriceEstimateCard({ data }) {
           </span>
         </div>
 
+        {/* Usage details */}
+        {(data.usageDuration || data.usageFrequency || data.damage) && (
+          <>
+            <div style={{ height: 1, background: 'var(--border)', margin: '2px 0' }} />
+            {data.usageDuration && (
+              <p style={{ fontSize: 11, color: 'var(--text-muted)', margin: 0 }}>
+                ⏱️ Used for: {data.usageDuration}
+              </p>
+            )}
+            {data.usageFrequency && (
+              <p style={{ fontSize: 11, color: 'var(--text-muted)', margin: 0 }}>
+                🔁 Frequency: {data.usageFrequency}
+              </p>
+            )}
+            {data.damage && (
+              <p style={{ fontSize: 11, color: 'var(--text-muted)', margin: 0 }}>
+                🔍 Condition: {data.damage}
+              </p>
+            )}
+          </>
+        )}
+
+        {/* Breakdown */}
         {data.breakdown && (
           <>
             <div style={{ height: 1, background: 'var(--border)', margin: '2px 0' }} />
@@ -111,19 +138,20 @@ function PriceEstimateCard({ data }) {
           </>
         )}
 
+        {/* Final estimate */}
         <div style={{
-          marginTop:    6,
-          paddingTop:   10,
-          borderTop:    '1px solid var(--border)',
-          display:      'flex',
+          marginTop:      6,
+          paddingTop:     10,
+          borderTop:      '1px solid var(--border)',
+          display:        'flex',
           justifyContent: 'space-between',
-          alignItems:   'center',
+          alignItems:     'center',
         }}>
           <span style={{ fontSize: 12, color: 'var(--text-secondary)', fontWeight: 600 }}>
-            Estimated Resale
+            Estimated Resale Price
           </span>
           <span style={{
-            fontSize:   16,
+            fontSize:   18,
             fontWeight: 700,
             color:      'var(--accent-primary)',
             fontFamily: "'Space Grotesk', sans-serif",
@@ -136,20 +164,21 @@ function PriceEstimateCard({ data }) {
   );
 }
 
+// ── Main message renderer ────────────────────────────────────────────────────
 export default function AIChatMessage({ msg }) {
   const isUser = msg.role === 'user';
 
   return (
     <div style={{ display: 'flex', justifyContent: isUser ? 'flex-end' : 'flex-start' }}>
       <div style={{
-        maxWidth:       '85%',
-        display:        'flex',
-        flexDirection:  'column',
-        alignItems:     isUser ? 'flex-end' : 'flex-start',
-        gap:            6,
+        maxWidth:      '88%',
+        display:       'flex',
+        flexDirection: 'column',
+        alignItems:    isUser ? 'flex-end' : 'flex-start',
+        gap:           6,
       }}>
 
-        {/* Bubble — text + optional image */}
+        {/* Text bubble + optional image preview */}
         {(msg.content || msg.imagePreview) && (
           <div style={{
             padding:      '9px 13px',
@@ -162,7 +191,6 @@ export default function AIChatMessage({ msg }) {
             fontFamily:   "'DM Sans', sans-serif",
             whiteSpace:   'pre-wrap',
           }}>
-            {/* Uploaded image preview */}
             {msg.imagePreview && (
               <img
                 src={msg.imagePreview}
@@ -181,12 +209,16 @@ export default function AIChatMessage({ msg }) {
           </div>
         )}
 
-        {/* Product cards */}
+        {/* Product results */}
         {msg.type === 'products' && msg.products?.length > 0 && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 6, width: '100%' }}>
-            {msg.products.map((p) => <ProductCard key={p._id} product={p} />)}
+            {msg.products.map((p) => (
+              <ProductCard key={p._id} product={p} />
+            ))}
           </div>
         )}
+
+        {/* No products found — content already shown in bubble above */}
 
         {/* Price estimate */}
         {msg.type === 'priceEstimate' && msg.data && (

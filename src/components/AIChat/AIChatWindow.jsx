@@ -5,7 +5,7 @@ import api from '../../services/api';
 
 const SUGGESTIONS = [
   'Find me sneakers under ₹1500',
-  'How do I list a product?',
+  'How do I negotiate a price?',
   'Estimate price for my old jeans',
   'How does payment work?',
 ];
@@ -34,8 +34,10 @@ export default function AIChatWindow({ onClose }) {
     if (!file) return;
     setImage(file);
     setImagePreview(URL.createObjectURL(file));
+    e.target.value = '';
   };
 
+  // Only send last 6 text messages as history to keep context window small
   const getHistory = () =>
     messages
       .filter((m) => m.type === 'text')
@@ -55,7 +57,8 @@ export default function AIChatWindow({ onClose }) {
     setInput('');
     setLoading(true);
 
-    const imageFile    = image;
+    // Capture and clear before async — prevents double-send
+    const imageFile     = image;
     const previewToSend = imagePreview;
     setImage(null);
     setImagePreview(null);
@@ -63,34 +66,37 @@ export default function AIChatWindow({ onClose }) {
     try {
       let imageUrl;
 
+      // Step 1: upload image to Cloudinary via server
       if (imageFile) {
         const formData = new FormData();
-        formData.append('image', imageFile);
+        formData.append('image', imageFile);    // ✅ matches server multer field name
         const { data: uploadData } = await api.post('/ai/upload-image', formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
         });
         imageUrl = uploadData.imageUrl;
       }
 
+      // Step 2: send message + optional imageUrl to AI
       const { data } = await api.post('/ai/chat', {
         message:             text,
         imageUrl,
         conversationHistory: getHistory(),
       });
 
+      // Step 3: render response by type
       if (data.type === 'products') {
         setMessages((p) => [...p, {
           role:     'assistant',
           type:     'products',
-          content:  data.message,
-          products: data.products,
+          content:  data.message,          // "Found X items for..." shown as bubble
+          products: data.products,         // rendered as ProductCard list below bubble
         }]);
       } else if (data.type === 'priceEstimate') {
         setMessages((p) => [...p, {
           role:    'assistant',
           type:    'priceEstimate',
           content: '',
-          data:    data.data,
+          data:    data.data,              // rendered as PriceEstimateCard
         }]);
       } else {
         setMessages((p) => [...p, {
@@ -103,7 +109,7 @@ export default function AIChatWindow({ onClose }) {
       setMessages((p) => [...p, {
         role:    'assistant',
         type:    'text',
-        content: 'Sorry, something went wrong. Please try again.',
+        content: '⚠️ Something went wrong. Please try again.',
       }]);
     } finally {
       setLoading(false);
@@ -112,36 +118,36 @@ export default function AIChatWindow({ onClose }) {
 
   return (
     <>
-      {/* Backdrop */}
+      {/* ── Backdrop ── */}
       <div
         onClick={onClose}
         style={{
-          position:   'fixed',
-          inset:      0,
-          zIndex:     9998,
-          background: 'var(--overlay)',
+          position:       'fixed',
+          inset:          0,
+          zIndex:         9998,
+          background:     'var(--overlay)',
           backdropFilter: 'blur(4px)',
         }}
       />
 
-      {/* Window */}
+      {/* ── Window ── */}
       <div style={{
-        position:     'fixed',
-        bottom:       24,
-        right:        24,
-        zIndex:       9999,
-        width:        420,
-        maxWidth:     'calc(100vw - 32px)',
-        height:       600,
-        maxHeight:    'calc(100vh - 48px)',
-        borderRadius: 20,
-        overflow:     'hidden',
-        display:      'flex',
-        flexDirection:'column',
-        background:   'var(--bg-card)',
-        border:       '1px solid var(--border)',
-        boxShadow:    '0 24px 80px rgba(0,0,0,0.4)',
-        animation:    'aiSlideUp 250ms cubic-bezier(0.16,1,0.3,1)',
+        position:      'fixed',
+        bottom:        24,
+        right:         24,
+        zIndex:        9999,
+        width:         420,
+        maxWidth:      'calc(100vw - 32px)',
+        height:        600,
+        maxHeight:     'calc(100vh - 48px)',
+        borderRadius:  20,
+        overflow:      'hidden',
+        display:       'flex',
+        flexDirection: 'column',
+        background:    'var(--bg-card)',
+        border:        '1px solid var(--border)',
+        boxShadow:     '0 24px 80px rgba(0,0,0,0.4)',
+        animation:     'aiSlideUp 250ms cubic-bezier(0.16,1,0.3,1)',
       }}>
         <style>{`
           @keyframes aiSlideUp {
@@ -156,12 +162,12 @@ export default function AIChatWindow({ onClose }) {
 
         {/* ── Header ── */}
         <div style={{
-          display:        'flex',
-          alignItems:     'center',
-          gap:            12,
-          padding:        '14px 16px',
-          background:     'linear-gradient(135deg, var(--accent-primary) 0%, #FF9A3C 100%)',
-          flexShrink:     0,
+          display:    'flex',
+          alignItems: 'center',
+          gap:        12,
+          padding:    '14px 16px',
+          background: 'linear-gradient(135deg, var(--accent-primary) 0%, #FF9A3C 100%)',
+          flexShrink: 0,
         }}>
           <div style={{
             width:          36,
@@ -207,18 +213,18 @@ export default function AIChatWindow({ onClose }) {
 
         {/* ── Messages ── */}
         <div style={{
-          flex:       1,
-          overflowY:  'auto',
-          padding:    '14px 14px 8px',
-          display:    'flex',
+          flex:          1,
+          overflowY:     'auto',
+          padding:       '14px 14px 8px',
+          display:       'flex',
           flexDirection: 'column',
-          gap:        10,
+          gap:           10,
         }}>
           {messages.map((msg, i) => (
             <AIChatMessage key={i} msg={msg} />
           ))}
 
-          {/* Typing indicator */}
+          {/* Typing dots */}
           {loading && (
             <div style={{
               display:      'flex',
@@ -232,12 +238,12 @@ export default function AIChatWindow({ onClose }) {
             }}>
               {[0, 1, 2].map((i) => (
                 <span key={i} style={{
-                  width:      6,
-                  height:     6,
+                  width:        6,
+                  height:       6,
                   borderRadius: '50%',
-                  background:  'var(--accent-primary)',
-                  display:     'inline-block',
-                  animation:   `aiBounce 1.2s ease-in-out ${i * 0.15}s infinite`,
+                  background:   'var(--accent-primary)',
+                  display:      'inline-block',
+                  animation:    `aiBounce 1.2s ease-in-out ${i * 0.15}s infinite`,
                 }} />
               ))}
             </div>
@@ -246,7 +252,7 @@ export default function AIChatWindow({ onClose }) {
           <div ref={bottomRef} />
         </div>
 
-        {/* ── Suggestions ── */}
+        {/* ── Quick suggestions — only on first message ── */}
         {messages.length === 1 && (
           <div style={{
             padding:    '0 14px 10px',
@@ -320,35 +326,41 @@ export default function AIChatWindow({ onClose }) {
 
         {/* ── Input bar ── */}
         <div style={{
-          display:      'flex',
-          alignItems:   'flex-end',
-          gap:          8,
-          padding:      '10px 12px',
-          borderTop:    '1px solid var(--border)',
-          background:   'var(--bg-secondary)',
-          flexShrink:   0,
+          display:    'flex',
+          alignItems: 'flex-end',
+          gap:        8,
+          padding:    '10px 12px',
+          borderTop:  '1px solid var(--border)',
+          background: 'var(--bg-secondary)',
+          flexShrink: 0,
         }}>
           <button
             onClick={() => fileRef.current?.click()}
-            title="Upload image"
+            title="Upload image for price estimation"
             style={{
-              padding:        8,
-              borderRadius:   10,
-              border:         'none',
-              background:     'transparent',
-              cursor:         'pointer',
-              color:          'var(--text-muted)',
-              flexShrink:     0,
-              display:        'flex',
-              alignItems:     'center',
-              transition:     'color 150ms',
+              padding:    8,
+              borderRadius: 10,
+              border:     'none',
+              background: 'transparent',
+              cursor:     'pointer',
+              color:      'var(--text-muted)',
+              flexShrink: 0,
+              display:    'flex',
+              alignItems: 'center',
+              transition: 'color 150ms',
             }}
             onMouseEnter={e => e.currentTarget.style.color = 'var(--accent-primary)'}
             onMouseLeave={e => e.currentTarget.style.color = 'var(--text-muted)'}
           >
             <ImagePlus size={19} />
           </button>
-          <input ref={fileRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleImageChange} />
+          <input
+            ref={fileRef}
+            type="file"
+            accept="image/*"
+            style={{ display: 'none' }}
+            onChange={handleImageChange}
+          />
 
           <textarea
             value={input}
@@ -359,21 +371,21 @@ export default function AIChatWindow({ onClose }) {
             placeholder="Ask anything…"
             rows={1}
             style={{
-              flex:        1,
-              resize:      'none',
-              background:  'var(--bg-input)',
-              color:       'var(--text-primary)',
-              border:      '1px solid var(--border)',
+              flex:         1,
+              resize:       'none',
+              background:   'var(--bg-input)',
+              color:        'var(--text-primary)',
+              border:       '1px solid var(--border)',
               borderRadius: 12,
-              padding:     '9px 12px',
-              fontSize:    13,
-              fontFamily:  "'DM Sans', sans-serif",
-              outline:     'none',
-              maxHeight:   100,
-              lineHeight:  1.5,
+              padding:      '9px 12px',
+              fontSize:     13,
+              fontFamily:   "'DM Sans', sans-serif",
+              outline:      'none',
+              maxHeight:    100,
+              lineHeight:   1.5,
             }}
-            onFocus={e  => e.target.style.borderColor = 'var(--accent-primary)'}
-            onBlur={e   => e.target.style.borderColor = 'var(--border)'}
+            onFocus={e => e.target.style.borderColor = 'var(--accent-primary)'}
+            onBlur={e  => e.target.style.borderColor = 'var(--border)'}
           />
 
           <button
@@ -385,7 +397,7 @@ export default function AIChatWindow({ onClose }) {
               borderRadius:   10,
               border:         'none',
               background:     'var(--accent-primary)',
-              cursor:         'pointer',
+              cursor:         loading || (!input.trim() && !image) ? 'not-allowed' : 'pointer',
               display:        'flex',
               alignItems:     'center',
               justifyContent: 'center',
@@ -393,7 +405,7 @@ export default function AIChatWindow({ onClose }) {
               opacity:        loading || (!input.trim() && !image) ? 0.4 : 1,
               transition:     'opacity 150ms, transform 150ms',
             }}
-            onMouseEnter={e => { if (!e.currentTarget.disabled) e.currentTarget.style.transform = 'scale(1.08)'; }}
+            onMouseEnter={e => { if (!loading) e.currentTarget.style.transform = 'scale(1.08)'; }}
             onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
           >
             <Send size={16} color="#fff" />
