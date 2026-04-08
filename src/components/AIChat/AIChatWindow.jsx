@@ -105,11 +105,15 @@ export default function AIChatWindow({ onClose }) {
           content: data.message,
         }]);
       }
-    } catch {
+    } catch (err) {
+      const msg = err?.response?.data?.message || '';
+      const isQuota = err?.response?.status === 503 || msg.toLowerCase().includes('limit');
       setMessages((p) => [...p, {
         role:    'assistant',
         type:    'text',
-        content: '⚠️ Something went wrong. Please try again.',
+        content: isQuota
+          ? "⏳ AI is on a short break — free-tier limit reached. Please try again in a few minutes."
+          : "⚠️ Something went wrong. Please try again.",
       }]);
     } finally {
       setLoading(false);
