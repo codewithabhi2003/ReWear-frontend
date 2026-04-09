@@ -1,7 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 
-// ── Product card — fields match controller .select() ─────────────────────────
-// Controller returns: _id, title, brand, sellingPrice, images, category, condition, size
+// ── Product card ──────────────────────────────────────────────────────────────
 function ProductCard({ product }) {
   const navigate = useNavigate();
   const img      = product.images?.[0] || '';
@@ -31,7 +30,7 @@ function ProductCard({ product }) {
       {img && (
         <img
           src={img}
-          alt={product.title}                   
+          alt={product.title}
           style={{ width: 56, height: 56, objectFit: 'cover', borderRadius: 8, flexShrink: 0 }}
         />
       )}
@@ -46,7 +45,7 @@ function ProductCard({ product }) {
           textOverflow: 'ellipsis',
           margin:       0,
         }}>
-          {product.brand} — {product.title}           {/* ✅ was product.name */}
+          {product.brand} — {product.title}
         </p>
         <p style={{ fontSize: 11, color: 'var(--text-muted)', margin: '2px 0' }}>
           {product.category} · {product.condition}
@@ -59,14 +58,14 @@ function ProductCard({ product }) {
           fontFamily: "'Space Grotesk', sans-serif",
           margin:     0,
         }}>
-          ₹{product.sellingPrice?.toLocaleString('en-IN')}  {/* ✅ was product.price */}
+          ₹{product.sellingPrice?.toLocaleString('en-IN')}
         </p>
       </div>
     </div>
   );
 }
 
-// ── Price estimate card — fields from AI JSON response ────────────────────────
+// ── Price estimate card ───────────────────────────────────────────────────────
 function PriceEstimateCard({ data }) {
   return (
     <div style={{
@@ -74,8 +73,9 @@ function PriceEstimateCard({ data }) {
       border:       '1px solid var(--border)',
       background:   'var(--bg-elevated)',
       overflow:     'hidden',
+      width:        '100%',
     }}>
-      {/* Header */}
+      {/* Gradient header */}
       <div style={{
         padding:    '10px 14px',
         background: 'linear-gradient(135deg, var(--accent-primary) 0%, #FF9A3C 100%)',
@@ -91,8 +91,10 @@ function PriceEstimateCard({ data }) {
         </p>
       </div>
 
-      {/* Details */}
+      {/* Body */}
       <div style={{ padding: '12px 14px', display: 'flex', flexDirection: 'column', gap: 6 }}>
+
+        {/* Original price */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>Original Price</span>
           <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-primary)', fontFamily: "'Space Grotesk', sans-serif" }}>
@@ -131,14 +133,14 @@ function PriceEstimateCard({ data }) {
               { icon: '🔍', label: data.breakdown.conditionAdjustment },
               { icon: '🏷️', label: data.breakdown.brandMultiplier },
             ].map(({ icon, label }) => label && (
-              <p key={label} style={{ fontSize: 11, color: 'var(--text-muted)', margin: 0 }}>
+              <p key={icon} style={{ fontSize: 11, color: 'var(--text-muted)', margin: 0 }}>
                 {icon} {label}
               </p>
             ))}
           </>
         )}
 
-        {/* Final estimate */}
+        {/* Final estimated price */}
         <div style={{
           marginTop:      6,
           paddingTop:     10,
@@ -164,7 +166,7 @@ function PriceEstimateCard({ data }) {
   );
 }
 
-// ── Main message renderer ────────────────────────────────────────────────────
+// ── Main message renderer ─────────────────────────────────────────────────────
 export default function AIChatMessage({ msg }) {
   const isUser = msg.role === 'user';
 
@@ -218,9 +220,7 @@ export default function AIChatMessage({ msg }) {
           </div>
         )}
 
-        {/* No products found — content already shown in bubble above */}
-
-        {/* Price estimate */}
+        {/* Price estimate card */}
         {msg.type === 'priceEstimate' && msg.data && (
           <PriceEstimateCard data={msg.data} />
         )}
