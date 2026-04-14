@@ -14,8 +14,6 @@ export default function Register() {
   });
   const [showPw, setShowPw]     = useState(false);
   const [loading, setLoading]   = useState(false);
-  const [agreed,  setAgreed]    = useState(false);
-
   const set = (key) => (e) => setForm({ ...form, [key]: e.target.value });
 
   const handleSubmit = async (e) => {
@@ -32,11 +30,6 @@ export default function Register() {
       toast.error("Passwords don't match");
       return;
     }
-    if (!agreed) {
-      toast.error('Please accept the Privacy Policy and Terms to continue');
-      return;
-    }
-
     setLoading(true);
     try {
       await register(form.name.trim(), form.email.trim(), form.password);
@@ -178,44 +171,8 @@ export default function Register() {
               )}
             </div>
 
-            {/* Privacy Policy Checkbox */}
-            <div
-              style={{
-                display: 'flex', alignItems: 'flex-start', gap: 12,
-                padding: '12px 14px', borderRadius: 12,
-                background: 'var(--bg-elevated)',
-                border: `1px solid ${agreed ? 'var(--accent-primary)' : 'var(--border)'}`,
-                cursor: 'pointer', transition: 'border-color 200ms',
-              }}
-              onClick={() => setAgreed(v => !v)}
-            >
-              <div style={{
-                width: 18, height: 18, borderRadius: 4, flexShrink: 0, marginTop: 1,
-                border: `2px solid ${agreed ? 'var(--accent-primary)' : 'var(--border)'}`,
-                background: agreed ? 'var(--accent-primary)' : 'transparent',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                transition: 'all 200ms',
-              }}>
-                {agreed && <span style={{ color: '#fff', fontSize: 11, fontWeight: 900 }}>✓</span>}
-              </div>
-              <p style={{ fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>
-                I have read and agree to the{' '}
-                <a href="/privacy-policy" target="_blank" rel="noopener noreferrer"
-                  onClick={e => e.stopPropagation()}
-                  style={{ color: 'var(--accent-primary)', fontWeight: 600 }}>
-                  Privacy Policy
-                </a>
-                {' '}and{' '}
-                <a href="/privacy-policy" target="_blank" rel="noopener noreferrer"
-                  onClick={e => e.stopPropagation()}
-                  style={{ color: 'var(--accent-primary)', fontWeight: 600 }}>
-                  Terms of Service
-                </a>
-              </p>
-            </div>
-
             {/* Submit */}
-            <button type="submit" disabled={loading || !agreed} className="btn-primary w-full mt-2" style={{ opacity: !agreed ? 0.6 : 1 }}>
+            <button type="submit" disabled={loading} className="btn-primary w-full mt-2">
               {loading ? <Spinner size={18} /> : <UserPlus size={18} />}
               {loading ? 'Creating account…' : 'Create Account'}
             </button>
