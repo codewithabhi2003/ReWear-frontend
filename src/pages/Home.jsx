@@ -287,19 +287,22 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── NEW ARRIVALS ──────────────────────────────────────────────────── */}
-      <section className="page-container">
-        <div className="flex items-end justify-between mb-6">
-          <div>
-            <p className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: 'var(--text-muted)' }}>Just Dropped</p>
-            <h2 className="section-title">Fresh Off the Rack ✨</h2>
-          </div>
-          <Link to="/browse?sort=newest" className="flex items-center gap-1 text-sm font-semibold" style={{ color: 'var(--accent-primary)' }}>
-            See all <ArrowRight size={15} />
-          </Link>
-        </div>
-        <ProductGrid products={newArrivals} loading={loadingN} emptyMessage="Be the first to list something 👀" />
-      </section>
+      
+      {/* 
+── NEW ARRIVALS ──────────────────────────────────────────────────── 
+<section className="page-container">
+  <div className="flex items-end justify-between mb-6">
+    <div>
+      <p className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: 'var(--text-muted)' }}>Just Dropped</p>
+      <h2 className="section-title">Fresh Off the Rack ✨</h2>
+    </div>
+    <Link to="/browse?sort=newest" className="flex items-center gap-1 text-sm font-semibold" style={{ color: 'var(--accent-primary)' }}>
+      See all <ArrowRight size={15} />
+    </Link>
+  </div>
+  <ProductGrid products={newArrivals} loading={loadingN} emptyMessage="Be the first to list something 👀" />
+</section>
+*/}
 
 
       {/* ── NEGOTIATE FEATURE ─────────────────────────────────────────────── */}
