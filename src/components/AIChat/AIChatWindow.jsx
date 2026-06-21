@@ -92,7 +92,7 @@ function LoggedOutPrompt({ onClose }) {
       {/* Buttons */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10, width: '100%', maxWidth: 280 }}>
         <button
-          onClick={() => { onClose(); navigate('/login'); }}
+          onClick={() => { onClose(); navigate('/auth/login'); }}
           style={{
             display:        'flex',
             alignItems:     'center',
@@ -118,7 +118,7 @@ function LoggedOutPrompt({ onClose }) {
         </button>
 
         <button
-          onClick={() => { onClose(); navigate('/signup'); }}
+          onClick={() => { onClose(); navigate('/auth/register'); }}
           style={{
             display:        'flex',
             alignItems:     'center',
